@@ -10,6 +10,7 @@
   },
   "dependencies": {
     "@tailwindcss/postcss": "^4.1.17",
+    "autoprefixer": "^10.4.22",
     "axios": "^1.7.2",
     "dayjs": "^1.11.13",
     "lucide-react": "^0.545.0",
