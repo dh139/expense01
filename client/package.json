@@ -9,6 +9,7 @@
     "preview": "vite preview --port 5173"
   },
   "dependencies": {
+    "@tailwindcss/postcss": "^4.1.17",
     "axios": "^1.7.2",
     "dayjs": "^1.11.13",
     "lucide-react": "^0.545.0",
