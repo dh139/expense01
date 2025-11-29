@@ -1,0 +1,25 @@
+<!doctype html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <title>Password reset code</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <style>
+      body { font-family: -apple-system, BlinkMacSystemFont, Segoe UI, Roboto, Arial, sans-serif; background: #f6f7f9; color: #0f172a; padding: 24px; }
+      .card { max-width: 560px; margin: 0 auto; background: #ffffff; border-radius: 12px; border: 1px solid #e2e8f0; padding: 24px; }
+      .brand { font-weight: 600; letter-spacing: .2px; color: #111827; }
+      .otp { font-size: 28px; letter-spacing: 8px; font-weight: 700; color: #111827; background: #f1f5f9; padding: 12px 16px; border-radius: 10px; text-align: center; }
+      .muted { color: #475569; font-size: 14px; }
+      .footer { margin-top: 24px; font-size: 12px; color: #64748b; }
+    </style>
+  </head>
+  <body>
+    <div class="card">
+      <div class="brand">{{APP_NAME}}</div>
+      <h2>Reset your password</h2>
+      <p class="muted">Hi {{NAME}}, use the 6-digit code below to reset your password. This code expires in 10 minutes.</p>
+      <div class="otp">{{OTP}}</div>
+      <p class="footer">If you didn’t request this, you can safely ignore this email.</p>
+    </div>
+  </body>
+</html>
