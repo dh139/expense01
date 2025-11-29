@@ -1,7 +1,7 @@
 import axios from "axios"
 
 const api = axios.create({
-  baseURL: import.meta.env.VITE_API_BASE || "https://expense01.vercel.app/",
+  baseURL: import.meta.env.VITE_API_BASE || "https://expense01.onrender.com",
 })
 
 // ✅ define setToken first
