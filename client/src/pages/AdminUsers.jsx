@@ -6,6 +6,7 @@ import { useToast } from "../components/Toast.jsx"
 
 export default function AdminUsers() {
   const [users, setUsers] = useState([])
+  const [isCreating, setIsCreating] = useState(false)
   const [form, setForm] = useState({
     name: "",
     email: "",
@@ -21,29 +22,60 @@ export default function AdminUsers() {
     const { data } = await api.get("/api/users")
     setUsers(data)
   }
+  
   useEffect(() => {
     load()
   }, [])
 
   async function createUser(e) {
     e.preventDefault()
-    await api.post("/api/users", {
-      ...form,
-      managerId: form.managerId || null,
-      emailCredentials: form.emailCredentials,
-    })
-    toast({
-      title: "User created",
-      description: form.emailCredentials ? "Credentials have been emailed to the user." : "User created without email.",
-      type: "success",
-    })
-    setForm({ name: "", email: "", password: "", role: "EMPLOYEE", managerId: "", emailCredentials: true })
-    await load()
+    setIsCreating(true)
+    
+    try {
+      const response = await api.post("/api/users", {
+        ...form,
+        managerId: form.managerId || null,
+        emailCredentials: form.emailCredentials,
+      })
+      
+      toast({
+        title: "User created",
+        description: form.emailCredentials 
+          ? "Credentials have been emailed to the user." 
+          : "User created without email.",
+        type: "success",
+      })
+      
+      // Reset form
+      setForm({ 
+        name: "", 
+        email: "", 
+        password: "", 
+        role: "EMPLOYEE", 
+        managerId: "", 
+        emailCredentials: true 
+      })
+      
+      // Reload users to update the table
+      await load()
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: error.response?.data?.error || "Failed to create user",
+        type: "error",
+      })
+    } finally {
+      setIsCreating(false)
+    }
   }
 
   async function saveSettings() {
     await api.patch("/api/users/company/settings", settings)
-    toast({ title: "Settings saved", description: "Company approval preferences updated.", type: "success" })
+    toast({ 
+      title: "Settings saved", 
+      description: "Company approval preferences updated.", 
+      type: "success" 
+    })
   }
 
   return (
@@ -75,6 +107,7 @@ export default function AdminUsers() {
               value={form.name}
               onChange={(e) => setForm({ ...form, name: e.target.value })}
               required
+              disabled={isCreating}
             />
           </label>
           <label>
@@ -86,6 +119,7 @@ export default function AdminUsers() {
               value={form.email}
               onChange={(e) => setForm({ ...form, email: e.target.value })}
               required
+              disabled={isCreating}
             />
           </label>
           <label>
@@ -97,13 +131,18 @@ export default function AdminUsers() {
               value={form.password}
               onChange={(e) => setForm({ ...form, password: e.target.value })}
               required
+              disabled={isCreating}
             />
           </label>
           <label>
             <div className="text-muted" style={{ fontSize: 12, marginBottom: 6 }}>
               Role
             </div>
-            <select value={form.role} onChange={(e) => setForm({ ...form, role: e.target.value })}>
+            <select 
+              value={form.role} 
+              onChange={(e) => setForm({ ...form, role: e.target.value })}
+              disabled={isCreating}
+            >
               {["EMPLOYEE", "MANAGER", "ADMIN"].map((r) => (
                 <option key={r} value={r}>
                   {r}
@@ -115,7 +154,11 @@ export default function AdminUsers() {
             <div className="text-muted" style={{ fontSize: 12, marginBottom: 6 }}>
               Manager (optional)
             </div>
-            <select value={form.managerId} onChange={(e) => setForm({ ...form, managerId: e.target.value })}>
+            <select 
+              value={form.managerId} 
+              onChange={(e) => setForm({ ...form, managerId: e.target.value })}
+              disabled={isCreating}
+            >
               <option value="">No Manager</option>
               {users
                 .filter((u) => u.role !== "EMPLOYEE")
@@ -131,11 +174,14 @@ export default function AdminUsers() {
               type="checkbox"
               checked={form.emailCredentials}
               onChange={(e) => setForm({ ...form, emailCredentials: e.target.checked })}
+              disabled={isCreating}
             />
             <span style={{ marginLeft: 8 }}>Email credentials to user</span>
           </label>
           <div className="row" style={{ justifyContent: "flex-end" }}>
-            <button>Create</button>
+            <button type="submit" disabled={isCreating}>
+              {isCreating ? "Creating..." : "Create"}
+            </button>
           </div>
         </form>
       </div>
@@ -157,7 +203,7 @@ export default function AdminUsers() {
                 <td>{u.name}</td>
                 <td>{u.email}</td>
                 <td>
-                  <span className=" info">{u.role}</span>
+                  <span className="info">{u.role}</span>
                 </td>
                 <td>{u.managerName || u.managerId || "-"}</td>
               </tr>
